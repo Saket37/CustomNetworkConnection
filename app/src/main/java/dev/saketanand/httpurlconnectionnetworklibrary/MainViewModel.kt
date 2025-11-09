@@ -1,9 +1,11 @@
 package dev.saketanand.httpurlconnectionnetworklibrary
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.saketanand.httpurlconnectionnetworklibrary.remote.model.GetPostResponseItem
 import dev.saketanand.httpurlconnectionnetworklibrary.utils.HttpConnection
+import dev.saketanand.httpurlconnectionnetworklibrary.utils.httpGetConnection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,16 +23,16 @@ class MainViewModel : ViewModel() {
 
     init {
         httpConnection = HttpConnection()
-        if (httpConnection != null) {
             viewModelScope.launch {
-                val data = httpConnection?.execute()
-                _uiState.update {
-                    it.copy(
-                        data = data.orEmpty()
-                    )
-                }
+                val data = httpGetConnection("https://jsonplaceholder.typicode.com/posts")
+                Log.d("Data", data.toString())
+//                _uiState.update {
+//                    it.copy(
+//                        data = data.orEmpty()
+//                    )
+//                }
             }
-        }
+
 
     }
 }

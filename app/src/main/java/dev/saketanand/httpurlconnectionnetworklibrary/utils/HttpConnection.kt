@@ -21,7 +21,9 @@ class HttpConnection {
         if (code != 200) {
             println("Failure")
         }
-
+        /**JAVA way for reading the response,
+         * uses the platform's default character set to decode the bytes into characters.
+         * default can be Windows-1252 on a Windows machine, UTF-8 on a Mac,**/
         val bufferedReader = BufferedReader(InputStreamReader(httpURLConnection?.getInputStream()))
 
         val jsonStringHolder: StringBuilder = StringBuilder()
