@@ -6,7 +6,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
 
-suspend fun httpGetConnection(apiUrl: String): String? = withContext(Dispatchers.IO) {
+suspend fun httpGetConnection(apiUrl: String): String = withContext(Dispatchers.IO) {
     var urlConnection: HttpURLConnection? = null
     val result: StringBuilder = StringBuilder()
     try {

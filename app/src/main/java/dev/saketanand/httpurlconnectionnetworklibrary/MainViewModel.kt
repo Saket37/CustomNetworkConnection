@@ -3,6 +3,7 @@ package dev.saketanand.httpurlconnectionnetworklibrary
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import dev.saketanand.httpurlconnectionnetworklibrary.remote.model.GetPostResponseItem
 import dev.saketanand.httpurlconnectionnetworklibrary.utils.HttpConnection
 import dev.saketanand.httpurlconnectionnetworklibrary.utils.httpGetConnection
@@ -23,15 +24,15 @@ class MainViewModel : ViewModel() {
 
     init {
         httpConnection = HttpConnection()
-            viewModelScope.launch {
-                val data = httpGetConnection("https://jsonplaceholder.typicode.com/posts")
-                Log.d("Data", data.toString())
-//                _uiState.update {
-//                    it.copy(
-//                        data = data.orEmpty()
-//                    )
-//                }
-            }
+        viewModelScope.launch {
+            val data = httpGetConnection("https://jsonplaceholder.typicode.com/posts")
+            val jsonObject = Gson().fromJson(data, Array<GetPostResponseItem>::class.java).toList()
+                _uiState.update {
+                    it.copy(
+                        data = jsonObject
+                    )
+                }
+        }
 
 
     }
