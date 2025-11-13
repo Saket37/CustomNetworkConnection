@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import dev.saketanand.httpurlconnectionnetworklibrary.remote.model.GetPostResponseItem
 import dev.saketanand.httpurlconnectionnetworklibrary.utils.HttpConnection
+import dev.saketanand.httpurlconnectionnetworklibrary.utils.createPostData
 import dev.saketanand.httpurlconnectionnetworklibrary.utils.httpGetConnection
+import dev.saketanand.httpurlconnectionnetworklibrary.utils.httpPostConnection
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -23,18 +25,35 @@ class MainViewModel : ViewModel() {
 
     init {
         httpConnection = HttpConnection()
-        viewModelScope.launch {
-            val data = httpGetConnection("https://jsonplaceholder.typicode.com/posts")
-            // converts json string to object
-            val jsonObject = Gson().fromJson(data, Array<GetPostResponseItem>::class.java).toList()
-            _uiState.update {
-                it.copy(
-                    data = jsonObject
-                )
-            }
+        fetchPosts()
+    }
+
+    private fun fetchPosts() = viewModelScope.launch {
+        val data = httpGetConnection("https://jsonplaceholder.typicode.com/posts")
+        // converts json string to object
+        val jsonObject = Gson().fromJson(data, Array<GetPostResponseItem>::class.java).toList()
+        _uiState.update {
+            it.copy(
+                data = jsonObject
+            )
+        }
+    }
+
+    private fun addPost() = viewModelScope.launch {
+        val post = httpPostConnection(
+            apiUrl = "https://jsonplaceholder.typicode.com/posts",
+            jsonBody = createPostData()
+        )
+        val jsonObject = Gson().fromJson(post, GetPostResponseItem::class.java)
+        _uiState.update {
+            it.copy(
+                data = it.data + jsonObject
+            )
         }
 
+
     }
+
 
     sealed interface Event {
         data object AddPost : Event
@@ -43,7 +62,7 @@ class MainViewModel : ViewModel() {
     fun onEvent(event: Event) {
         when (event) {
             is Event.AddPost -> {
-
+                addPost()
             }
         }
     }

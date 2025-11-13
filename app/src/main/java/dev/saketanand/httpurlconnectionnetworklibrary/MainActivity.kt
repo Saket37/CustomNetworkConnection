@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -30,10 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.saketanand.httpurlconnectionnetworklibrary.ui.component.Item
@@ -52,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize(), floatingActionButton = {
                     FloatingActionButton(
-                        onClick = {},
+                        onClick = { viewModel.onEvent(event = MainViewModel.Event.AddPost) },
                         contentColor = Color.Black,
                         containerColor = Color.Cyan
                     ) {
@@ -64,8 +61,9 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }) { innerPadding ->
+                    val visible by remember { derivedStateOf { state.firstVisibleItemIndex > 0 } }
                     val pad =
-                        if (state.firstVisibleItemIndex > 1) PaddingValues(0.dp) else innerPadding
+                        if (visible) PaddingValues(0.dp) else innerPadding
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
